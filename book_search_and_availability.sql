@@ -7,10 +7,10 @@ SELECT book.isbn, book.title, authors.name, book_loans.date_out, book_loans.date
 FROM (
     ((book JOIN book_authors ON book.isbn = book_authors.isbn)
         JOIN authors ON book_authors.author_id = authors.author_id)
-        RIGHT JOIN book_loans ON book.isbn = book_loans.isbn
+        LEFT JOIN book_loans ON book.isbn = book_loans.isbn
 )
 WHERE
-    book.isbn LIKE '%<keyword>%'
-    OR book.title LIKE '%<keyword>%'
-    OR authors.name LIKE '%<keyword>%'
+    book.isbn LIKE '%will%'
+    OR book.title LIKE '%will%'
+    OR authors.name LIKE '%will%'
 ;
