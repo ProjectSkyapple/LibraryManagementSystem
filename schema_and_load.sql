@@ -1,0 +1,68 @@
+DROP DATABASE IF EXISTS LIBRARY;
+CREATE DATABASE LIBRARY;
+USE LIBRARY;
+
+DROP TABLE IF EXISTS BOOK;
+CREATE TABLE BOOK (
+    Isbn        CHAR(10) PRIMARY KEY NOT NULL,
+    Title       VARCHAR(1000) NOT NULL
+);
+
+DROP TABLE IF EXISTS AUTHORS;
+CREATE TABLE AUTHORS (
+    Author_id   INT PRIMARY KEY NOT NULL,
+    Name        VARCHAR(1000) NOT NULL
+);
+
+DROP TABLE IF EXISTS BOOK_AUTHORS;
+CREATE TABLE BOOK_AUTHORS (
+    Author_id   INT NOT NULL,
+    Isbn        CHAR(10) NOT NULL,
+
+    CONSTRAINT pk_bookauthors PRIMARY KEY (Author_id, Isbn),
+    CONSTRAINT fk_bookauthors_authors FOREIGN KEY (Author_id) references AUTHORS(Author_id),
+    CONSTRAINT fk_bookauthors_book FOREIGN KEY (Isbn) references BOOK(Isbn)
+);
+
+DROP TABLE IF EXISTS BORROWER;
+CREATE TABLE BORROWER (
+    Card_id     CHAR(8) PRIMARY KEY NOT NULL, -- IDXXXXXX
+    Ssn         CHAR(11) UNIQUE NOT NULL, -- XXX-XX-XXXX
+    Bname       VARCHAR(100) NOT NULL,
+    Address     VARCHAR(2000) NOT NULL,
+    Phone       CHAR(14) -- (XXX) XXX-XXXX
+);
+
+DROP TABLE IF EXISTS BOOK_LOANS;
+CREATE TABLE BOOK_LOANS (
+    Loan_id     INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    Isbn        CHAR(10) NOT NULL,
+    Card_id     CHAR(8) NOT NULL,
+    Date_out    DATE NOT NULL,
+    Due_date    DATE NOT NULL,
+    Date_in     DATE,
+
+    CONSTRAINT fk_bookloansisbn_bookisbn FOREIGN KEY (Isbn) references BOOK(Isbn),
+    CONSTRAINT fk_bookloanscardid_borrowercardid FOREIGN KEY (Card_id) references BORROWER(Card_id)
+);
+
+DROP TABLE IF EXISTS FINES;
+CREATE TABLE FINES (
+    Loan_id     INT PRIMARY KEY NOT NULL,
+    Fine_amt    DECIMAL(10, 2) NOT NULL,
+    Paid        BIT NOT NULL,
+
+    CONSTRAINT fk_fines_bookloans FOREIGN KEY (Loan_id) references BOOK_LOANS(Loan_id)
+);
+
+-- SET GLOBAL local_infile = 1;
+
+LOAD DATA INFILE 'book.csv' INTO TABLE BOOK;
+LOAD DATA INFILE 'authors.csv' INTO TABLE AUTHORS;
+LOAD DATA INFILE 'book_authors.csv' INTO TABLE BOOK_AUTHORS;
+LOAD DATA INFILE 'borrower.csv' INTO TABLE BORROWER;
+
+SELECT * FROM BOOK;
+SELECT * FROM AUTHORS;
+SELECT * FROM BOOK_AUTHORS;
+SELECT * FROM BORROWER;
