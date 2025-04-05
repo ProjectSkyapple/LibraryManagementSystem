@@ -22,5 +22,5 @@ SELECT borrower.card_id, borrower.bname, SUM(fines.fine_amt) AS total_fines_owed
 FROM fines, book_loans, borrower
 WHERE fines.loan_id = book_loans.loan_id
     AND book_loans.card_id = borrower.card_id
-    AND fines.paid = '<falsy value>'
+    AND fines.paid = 0
 GROUP BY borrower.card_id;
